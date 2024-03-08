@@ -1,0 +1,26 @@
+[mapper]
+bin = "/usr/local/bin/tinymapper_amd64"
+file-directory = "build"
+
+[resolution]
+hostname = "jellyfin.deadlinefen.online"
+dns = ["114.114.114.114", "119.29.29.29", "101.226.4.6", "123.125.81.6"]
+ttl = 10
+
+[jobs]
+[jobs.ssh]
+from-port = 6111
+to-ip = "192.168.2.4"
+to-port = 22
+type = "t"
+[jobs.clash-dashboard]
+from-port = 9191
+to-ip = "192.168.2.4"
+to-port = 9090
+type = "t"
+
+[log]
+level = "Debug"
+path = "build"
+to-stdout-only = true
+also-to-stderr = true

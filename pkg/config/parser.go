@@ -8,25 +8,33 @@ import (
 type Config struct {
 	Mapper     Mapper         `toml:"mapper"`
 	Resolution Resolution     `toml:"resolution"`
-	Jobs       map[string]Job `toml:"job"`
-	RTtl       int            `toml:"resolution-ttl"`
+	Jobs       map[string]Job `toml:"jobs"`
+	Log        Log            `toml:"log"`
 }
 
 type Mapper struct {
-	Bin      string `toml:"bin"`
-	FilePath string `toml:"filepath"`
+	Bin     string `toml:"bin"`
+	FileDir string `toml:"file-directory"`
 }
 
 type Resolution struct {
 	Hostname string   `toml:"hostname"`
 	Dns      []string `toml:"dns"`
+	Ttl      int      `toml:"ttl"`
 }
 
 type Job struct {
 	FromPort uint16 `toml:"from-port"`
 	ToIp     string `toml:"to-ip"`
 	ToPort   uint16 `toml:"to-port"`
-	CheckTtl int64  `toml:"check-ttl"`
+	Type     string `toml:"type"`
+}
+
+type Log struct {
+	Level        string `toml:"level"`
+	Path         string `toml:"path"`
+	ToStdoutOnly bool   `toml:"to-stdout-only"`
+	AlsoToStderr bool   `toml:"also-to-stderr"`
 }
 
 type IParser interface {
@@ -51,6 +59,10 @@ type IParserFactory interface {
 }
 
 type ParserFactory struct {
+}
+
+func NewParserFactory() IParserFactory {
+	return &ParserFactory{}
 }
 
 func (pf *ParserFactory) NewParser(path string) IParser {
