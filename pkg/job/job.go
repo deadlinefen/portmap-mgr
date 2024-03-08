@@ -2,6 +2,7 @@ package job
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"sync"
 
@@ -11,6 +12,7 @@ import (
 type Job struct {
 	info *config.Job
 	name string
+	file *os.File
 
 	process *Process
 	wg      *sync.WaitGroup
@@ -21,19 +23,20 @@ func (j *Job) Run(mapper *config.Mapper, ipv6 string) {
 		j.process.Stop()
 	}
 
-	cmdLine := fmt.Sprintf("%s -r[%s]:%d -l%s:%d -%s > %s/%d->%d.log",
-		mapper.Bin, ipv6, j.info.FromPort,
-		j.info.ToIp, j.info.ToPort, j.info.Type,
-		mapper.FileDir, j.info.FromPort, j.info.ToPort)
+	local := fmt.Sprintf("-l[%s]:%d", ipv6, j.info.FromPort)
+	remote := fmt.Sprintf("-r%s:%d", j.info.ToIp, j.info.ToPort)
+	mapType := fmt.Sprintf("-%s", j.info.Type)
 
 	j.process = &Process{
 		name:    j.name,
-		cmd:     exec.Command(cmdLine),
+		cmd:     exec.Command(mapper.Bin, local, remote, mapType),
+		file:    j.file,
 		errChan: make(chan error),
 		stop:    make(chan struct{}),
 		wg:      j.wg,
 	}
 
+	j.process.cmd.Stdout = j.file
 	go j.process.Begin()
 }
 

@@ -1,6 +1,7 @@
 package job
 
 import (
+	"os"
 	"os/exec"
 	"sync"
 
@@ -10,6 +11,7 @@ import (
 type Process struct {
 	name    string
 	cmd     *exec.Cmd
+	file    *os.File
 	errChan chan error
 	stop    chan struct{}
 
@@ -17,7 +19,14 @@ type Process struct {
 }
 
 func (p *Process) run() {
-	p.errChan <- p.cmd.Run()
+	p.wg.Add(1)
+	go func() {
+		defer p.wg.Done()
+
+		p.file.Truncate(0)
+		
+		p.errChan <- p.cmd.Run()
+	}()
 }
 
 func (p *Process) Stop() {
@@ -25,8 +34,7 @@ func (p *Process) Stop() {
 }
 
 func (p *Process) Begin() {
-	p.wg.Add(1)
-	defer p.wg.Done()
+	p.run()
 
 	for {
 		select {
@@ -36,7 +44,7 @@ func (p *Process) Begin() {
 			return
 		case err := <-p.errChan:
 			log.Warnf("job %s process exited abnormally, err: %+v", p.name, err)
-			go p.run()
+			p.run()
 		}
 	}
 }

@@ -24,7 +24,7 @@ func main() {
 		Ttl:      1,
 	}
 	fmt.Printf("resolution: %+v\n", r)
-	checker := ddns.NewResoluterFactory().NewResoluter(r)
+	checker := ddns.NewResoluterFactory(r).NewResoluter()
 
 	ip, err := checker.ResoluteOneIp()
 	if err != nil {

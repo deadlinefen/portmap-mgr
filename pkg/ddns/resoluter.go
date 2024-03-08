@@ -53,16 +53,17 @@ func (c *Resoluter) ResoluteOneIp() (string, error) {
 }
 
 type IResoluterFactory interface {
-	NewResoluter(resolution *config.Resolution) IResoluter
+	NewResoluter() IResoluter
 }
 
 type ResoluterFactory struct {
+	resolution *config.Resolution
 }
 
-func (cf *ResoluterFactory) NewResoluter(resolution *config.Resolution) IResoluter {
-	return &Resoluter{resolution: resolution, dnsIndex: 0}
+func (cf *ResoluterFactory) NewResoluter() IResoluter {
+	return &Resoluter{resolution: cf.resolution, dnsIndex: 0}
 }
 
-func NewResoluterFactory() IResoluterFactory {
-	return &ResoluterFactory{}
+func NewResoluterFactory(resolution *config.Resolution) IResoluterFactory {
+	return &ResoluterFactory{resolution: resolution}
 }

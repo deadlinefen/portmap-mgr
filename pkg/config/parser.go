@@ -55,16 +55,17 @@ func (t *Parser) Parse() (*Config, error) {
 }
 
 type IParserFactory interface {
-	NewParser(path string) IParser
+	NewParser() IParser
 }
 
 type ParserFactory struct {
+	path string
 }
 
-func NewParserFactory() IParserFactory {
-	return &ParserFactory{}
+func NewParserFactory(path string) IParserFactory {
+	return &ParserFactory{path: path}
 }
 
-func (pf *ParserFactory) NewParser(path string) IParser {
-	return &Parser{Path: path}
+func (pf *ParserFactory) NewParser() IParser {
+	return &Parser{Path: pf.path}
 }

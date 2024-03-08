@@ -7,8 +7,7 @@ import (
 )
 
 type IChecker interface {
-	Begin()
-	CheckDNSOnce() bool
+	Start()
 	Stop()
 }
 
@@ -21,7 +20,7 @@ type Checker struct {
 	stop   chan struct{}
 }
 
-func (c *Checker) CheckDNSOnce() bool {
+func (c *Checker) checkDNSOnce() bool {
 	log.Debug("Check DNS Once...")
 
 	ipNow, err := c.resoluter.ResoluteOneIp()
@@ -33,21 +32,29 @@ func (c *Checker) CheckDNSOnce() bool {
 	if ipNow != c.ip {
 		log.Debugf("Ip changed to %s", ipNow)
 		c.ipChan <- ipNow
+		c.ip = ipNow
 	}
 
 	return true
 }
 
-func (c *Checker) Begin() {
+func (c *Checker) checkDNS() {
+	for !c.checkDNSOnce() {
+		log.Infof("check DNS failed, retry.")
+	}
+}
+
+func (c *Checker) Start() {
 	ticker := time.NewTicker(time.Second * time.Duration(c.ttl))
+	c.checkDNS()
 
 	for {
 		select {
 		case <-c.stop:
-			break
+			log.Debugf("checker start() quit.")
+			return
 		case <-ticker.C:
-			for !c.CheckDNSOnce() {
-			}
+			c.checkDNS()
 		}
 	}
 }
@@ -57,22 +64,27 @@ func (c *Checker) Stop() {
 }
 
 type ICheckerFactory interface {
-	NewChecker(resoluter IResoluter, ttl int, ipChan chan string) IChecker
+	NewChecker(ipChan chan string) IChecker
 }
 
 type CheckerFactory struct {
+	resoluterFactory IResoluterFactory
+	ttl              int
 }
 
-func (cf *CheckerFactory) NewChecker(resoluter IResoluter, ttl int, ipChan chan string) IChecker {
+func (cf *CheckerFactory) NewChecker(ipChan chan string) IChecker {
 	return &Checker{
-		resoluter: resoluter,
+		resoluter: cf.resoluterFactory.NewResoluter(),
 		ip:        "",
-		ttl:       ttl,
+		ttl:       cf.ttl,
 		ipChan:    ipChan,
 		stop:      make(chan struct{}),
 	}
 }
 
-func NewCheckerFactory() ICheckerFactory {
-	return &CheckerFactory{}
+func NewCheckerFactory(rf IResoluterFactory, ttl int) ICheckerFactory {
+	return &CheckerFactory{
+		resoluterFactory: rf,
+		ttl:              ttl,
+	}
 }

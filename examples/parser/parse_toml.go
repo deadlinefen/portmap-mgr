@@ -15,7 +15,7 @@ func init() {
 }
 
 func main() {
-	parser := config.NewParserFactory().NewParser(tomlPath)
+	parser := config.NewParserFactory(tomlPath).NewParser()
 
 	config, err := parser.Parse()
 	if err != nil {
