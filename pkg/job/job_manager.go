@@ -46,7 +46,7 @@ func NewJobManagerFactory(mapper *config.Mapper) IJobManagerFactory {
 func (jm *JobManager) AddJobs(jobs map[string]config.Job) error {
 	for name, info := range jobs {
 		log.Infof("Add job %s", name)
-		filePath := fmt.Sprintf("%s/%d-%d.log", jm.mapper.FileDir, info.FromPort, info.ToPort)
+		filePath := jm.getLogfilename(info.FromPort, info.ToIp, info.ToPort)
 		file, err := jm.createLogFile(filePath)
 		if err != nil {
 			return errors.Wrapf(err, "create log file failed")
@@ -62,6 +62,10 @@ func (jm *JobManager) AddJobs(jobs map[string]config.Job) error {
 	}
 
 	return nil
+}
+
+func (jm *JobManager) getLogfilename(fromPort uint16, toIp string, toPort uint16) string {
+	return fmt.Sprintf("%s/%d-%s:%d.log", jm.mapper.FileDir, fromPort, toIp, toPort)
 }
 
 func (jm *JobManager) createLogFile(logFile string) (*os.File, error) {
