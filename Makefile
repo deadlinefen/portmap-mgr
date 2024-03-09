@@ -7,7 +7,7 @@ endif
 
 .PHONY: build
 ## build : Build binary
-build: manager read_config ddns_resolute
+build: pmmanager read_config ddns_resolute
 
 .PHONY: bin
 ## bin : Create bin directory
@@ -33,10 +33,10 @@ help: Makefile
 # --------------- ------------------ ---------------
 # --------------- User Defined Tasks ---------------
 
-PHONY: manager
+PHONY: pmmanager
 ## manager : Build manager
-manager: bin
-	$(V)go build -o build/bin/manager main/manager.go
+pmmanager: bin
+	$(V)go build -o build/bin/pmmanager main/pm_manager.go
 
 .PHONY: read_config
 ## read_config : Build read_config binary for test
