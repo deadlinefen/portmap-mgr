@@ -1,2 +1,3 @@
 build
 config/my-config.toml
+*.log

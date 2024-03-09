@@ -19,9 +19,9 @@ func init() {
 
 func main() {
 	r := &config.Resolution{
-		Hostname: domain,
-		Dns:      []string{"8.8.8.8"},
-		Ttl:      1,
+		Domain: domain,
+		Dns:    []string{"8.8.8.8"},
+		Ttl:    1,
 	}
 	fmt.Printf("resolution: %+v\n", r)
 	checker := ddns.NewResoluterFactory(r).NewResoluter()

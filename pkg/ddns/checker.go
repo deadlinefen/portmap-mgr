@@ -40,7 +40,8 @@ func (c *Checker) checkDNSOnce() bool {
 
 func (c *Checker) checkDNS() {
 	for !c.checkDNSOnce() {
-		log.Infof("check DNS failed, retry.")
+		log.Infof("check DNS failed, retry afer 3s.")
+		time.Sleep(time.Second * time.Duration(3))
 	}
 }
 
@@ -51,7 +52,7 @@ func (c *Checker) Start() {
 	for {
 		select {
 		case <-c.stop:
-			log.Debugf("checker start() quit.")
+			log.Debugf("checker get a stop signal")
 			return
 		case <-ticker.C:
 			c.checkDNS()

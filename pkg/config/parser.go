@@ -18,9 +18,9 @@ type Mapper struct {
 }
 
 type Resolution struct {
-	Hostname string   `toml:"hostname"`
-	Dns      []string `toml:"dns"`
-	Ttl      int      `toml:"ttl"`
+	Domain string   `toml:"domain"`
+	Dns    []string `toml:"dns"`
+	Ttl    int      `toml:"ttl"`
 }
 
 type Job struct {

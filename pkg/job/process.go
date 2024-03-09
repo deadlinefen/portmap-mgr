@@ -1,50 +1,29 @@
 package job
 
 import (
-	"os"
 	"os/exec"
 	"sync"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type Process struct {
-	name    string
-	cmd     *exec.Cmd
-	file    *os.File
-	errChan chan error
-	stop    chan struct{}
+	cmd *exec.Cmd
 
-	wg *sync.WaitGroup
+	closed  bool
+	restart chan struct{}
+	wg      sync.WaitGroup
 }
 
-func (p *Process) run() {
+func (p *Process) Run() {
 	p.wg.Add(1)
-	go func() {
-		defer p.wg.Done()
+	defer p.wg.Done()
 
-		p.file.Truncate(0)
-		
-		p.errChan <- p.cmd.Run()
-	}()
+	if err := p.cmd.Run(); err != nil && !p.closed {
+		close(p.restart)
+	}
 }
 
 func (p *Process) Stop() {
-	close(p.stop)
-}
-
-func (p *Process) Begin() {
-	p.run()
-
-	for {
-		select {
-		case <-p.stop:
-			p.cmd.Process.Kill()
-			<-p.errChan
-			return
-		case err := <-p.errChan:
-			log.Warnf("job %s process exited abnormally, err: %+v", p.name, err)
-			p.run()
-		}
-	}
+	p.closed = true
+	p.cmd.Process.Kill()
+	p.wg.Wait()
 }

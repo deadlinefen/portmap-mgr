@@ -31,7 +31,7 @@ func (c *Resoluter) ResoluteOneIp() (string, error) {
 
 	client := new(dns.Client)
 	msg := new(dns.Msg)
-	msg.SetQuestion(c.resolution.Hostname+".", dns.TypeAAAA)
+	msg.SetQuestion(c.resolution.Domain+".", dns.TypeAAAA)
 
 	r, _, err := client.Exchange(msg, dnsServer+":53")
 	if err != nil {

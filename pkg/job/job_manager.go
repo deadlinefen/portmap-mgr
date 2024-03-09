@@ -3,7 +3,6 @@ package job
 import (
 	"fmt"
 	"os"
-	"sync"
 
 	"github.com/deadlinefen/portmap-mgr/pkg/config"
 	"github.com/pkg/errors"
@@ -52,7 +51,14 @@ func (jm *JobManager) AddJobs(jobs map[string]config.Job) error {
 		if err != nil {
 			return errors.Wrapf(err, "create log file failed")
 		}
-		jm.jobs = append(jm.jobs, Job{name: name, info: &info, file: file,wg: &sync.WaitGroup{}})
+		jm.jobs = append(jm.jobs, Job{
+			info:    &info,
+			name:    name,
+			bin:     jm.mapper.Bin,
+			log:     file,
+			process: nil,
+			stop:    make(chan struct{}),
+		})
 	}
 
 	return nil
@@ -77,7 +83,7 @@ func (jm *JobManager) stopAll() {
 func (jm *JobManager) runAll(ipv6 string) {
 	for i := range jm.jobs {
 		log.Infof("job %s run with ip: %s", jm.jobs[i].name, ipv6)
-		jm.jobs[i].Run(jm.mapper, ipv6)
+		jm.jobs[i].Run(ipv6)
 	}
 }
 
@@ -85,6 +91,7 @@ func (jm *JobManager) Start() {
 	for {
 		select {
 		case <-jm.stop:
+			log.Debugf("jm get a stop signal")
 			jm.stopAll()
 			return
 		case newIpv6 := <-jm.ipChan:
