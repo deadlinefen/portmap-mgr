@@ -9,18 +9,18 @@ ttl = 60                                                                 #second
 
 [jobs]
 [jobs.xxx] # [jobs.{job_name}]
-from-port = 6111      # ipv6 port
-to-ip = "192.168.2.4" # LAN ip
-to-port = 22          # LAN port
-type = "t"            # "t" for tcp, "u" for udp
+from-port = 1234       # ipv6 port
+to-ip = "192.168.10.2" # LAN ip
+to-port = 22           # LAN port
+type = "t"             # "t" for tcp, "u" for udp
 [jobs.yyy]
-from-port = 9191
-to-ip = "192.168.2.4"
-to-port = 9090
+from-port = 5678
+to-ip = "192.168.10.3"
+to-port = 22
 type = "t"
 
 [log]
-level = "Debug"                 # log level: info-debug-warn-error-fatal-panic
-path = "/dir/to/pm-manager-log" # log file
-to-stdout-only = false          # to stdout only
-also-to-stderr = true           # also to stderr
+level = "info"                   # log level: debug-info-warn-error-fatal-panic
+path = "/path/to/pm-manager.log" # log file
+to-stdout-only = false           # to stdout only
+also-to-stderr = true            # also to stderr

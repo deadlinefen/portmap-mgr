@@ -17,7 +17,7 @@ type IJobManager interface {
 
 type JobManager struct {
 	mapper *config.Mapper
-	jobs   []Job
+	jobs   []*Job
 	ipChan chan string
 	stop   chan struct{}
 }
@@ -33,7 +33,7 @@ type JobManagerFactory struct {
 func (jmf *JobManagerFactory) NewJobManager(ipChan chan string) IJobManager {
 	return &JobManager{
 		mapper: jmf.mapper,
-		jobs:   []Job{},
+		jobs:   []*Job{},
 		ipChan: ipChan,
 		stop:   make(chan struct{}),
 	}
@@ -46,19 +46,25 @@ func NewJobManagerFactory(mapper *config.Mapper) IJobManagerFactory {
 func (jm *JobManager) AddJobs(jobs map[string]config.Job) error {
 	for name, info := range jobs {
 		log.Infof("Add job %s", name)
+
 		filePath := jm.getLogfilename(info.FromPort, info.ToIp, info.ToPort)
 		file, err := jm.createLogFile(filePath)
 		if err != nil {
 			return errors.Wrapf(err, "create log file failed")
 		}
-		jm.jobs = append(jm.jobs, Job{
+
+		job := &Job{
 			info:    &info,
 			name:    name,
 			bin:     jm.mapper.Bin,
 			log:     file,
 			process: nil,
+			restart: make(chan struct{}),
 			stop:    make(chan struct{}),
-		})
+		}
+		go job.Start()
+
+		jm.jobs = append(jm.jobs, job)
 	}
 
 	return nil
@@ -78,16 +84,15 @@ func (jm *JobManager) createLogFile(logFile string) (*os.File, error) {
 }
 
 func (jm *JobManager) stopAll() {
-	for i := range jm.jobs {
-		jm.jobs[i].Stop()
-		log.Infof("Job %s stopped.", jm.jobs[i].name)
+	for _, job := range jm.jobs {
+		job.Stop()
+		log.Infof("Job %s stopped.", job.name)
 	}
 }
 
 func (jm *JobManager) runAll(ipv6 string) {
-	for i := range jm.jobs {
-		log.Infof("Job %s run with ip: %s", jm.jobs[i].name, ipv6)
-		jm.jobs[i].Run(ipv6)
+	for _, job := range jm.jobs {
+		job.Run(ipv6)
 	}
 }
 

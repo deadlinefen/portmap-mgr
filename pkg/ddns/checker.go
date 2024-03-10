@@ -21,7 +21,7 @@ type Checker struct {
 }
 
 func (c *Checker) checkDNSOnce() bool {
-	log.Debug("Check DNS Once...")
+	log.Debug("check DNS Once...")
 
 	ipNow, err := c.resoluter.ResoluteOneIp()
 	if err != nil {
@@ -30,7 +30,7 @@ func (c *Checker) checkDNSOnce() bool {
 	}
 
 	if ipNow != c.ip {
-		log.Debugf("Ip changed to %s", ipNow)
+		log.Infof("Ip changed to %s", ipNow)
 		c.ipChan <- ipNow
 		c.ip = ipNow
 	}

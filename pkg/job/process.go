@@ -36,7 +36,7 @@ func (p *Process) Run() {
 	defer p.wg.Done()
 
 	if err := p.cmd.Run(); p.needRestart(err) {
-		close(p.restart)
+		p.restart <- struct{}{}
 	}
 }
 

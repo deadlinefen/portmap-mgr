@@ -18,9 +18,9 @@ type Job struct {
 	ipv6 string
 
 	process *Process
-	restart chan struct{}
 
-	stop chan struct{}
+	restart chan struct{}
+	stop    chan struct{}
 }
 
 func (j *Job) Start() {
@@ -46,8 +46,8 @@ func (j *Job) Run(ipv6 string) {
 
 	j.ipv6 = ipv6
 	j.process = j.createProcess()
-	j.restart = j.process.restart
 
+	log.Infof("Job %s run with ip: %s", j.name, ipv6)
 	go j.process.Run()
 }
 
@@ -67,7 +67,7 @@ func (j *Job) createProcess() *Process {
 		name:    j.name,
 		cmd:     cmd,
 		closed:  false,
-		restart: make(chan struct{}),
+		restart: j.restart,
 	}
 }
 

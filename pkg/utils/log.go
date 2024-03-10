@@ -20,6 +20,8 @@ func InitLog(cfg *config.Log) {
 	}
 	log.SetLevel(level)
 	log.SetFormatter(&prefixed.TextFormatter{
+		ForceColors:     true,
+		DisableColors:   false,
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05",
 		ForceFormatting: true,
@@ -37,7 +39,7 @@ func InitLog(cfg *config.Log) {
 		log.SetOutput(os.Stdout)
 	} else {
 		output := &lumberjack.Logger{
-			Filename:   cfg.Path + "/mgr.log",
+			Filename:   cfg.Path,
 			MaxSize:    100,
 			MaxAge:     7,
 			MaxBackups: 30,
