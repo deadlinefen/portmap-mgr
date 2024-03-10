@@ -1,4 +1,4 @@
-module github.com/deadlinefen/portmap-mgr
+module github.com/deadlinefen/tinyPortMapper-manager-ipv6
 
 go 1.22.1
 

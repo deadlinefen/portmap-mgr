@@ -3,9 +3,9 @@ package control
 import (
 	"sync"
 
-	"github.com/deadlinefen/portmap-mgr/pkg/config"
-	"github.com/deadlinefen/portmap-mgr/pkg/ddns"
-	"github.com/deadlinefen/portmap-mgr/pkg/job"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/config"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/ddns"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/job"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -45,14 +45,14 @@ func NewControllerFactory(cf ddns.ICheckerFactory, jmf job.IJobManagerFactory) I
 func (c *Controller) Start() {
 	var wg sync.WaitGroup
 
-	log.Infof("job manager start.")
+	log.Infof("Job manager starting...")
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		c.jobManager.Start()
 	}()
 
-	log.Infof("checker start.")
+	log.Infof("Checker starting...")
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -71,7 +71,7 @@ func (c *Controller) Load(jobs map[string]config.Job) error {
 
 func (c *Controller) Stop() {
 	c.jobManager.Stop()
-	log.Infof("job manager stopped.")
+	log.Infof("Job manager stopped.")
 	c.checker.Stop()
-	log.Infof("checker stopped.")
+	log.Infof("Checker stopped.")
 }

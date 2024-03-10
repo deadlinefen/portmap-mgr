@@ -1,7 +1,7 @@
 package ddns
 
 import (
-	"github.com/deadlinefen/portmap-mgr/pkg/config"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/config"
 	"github.com/miekg/dns"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"

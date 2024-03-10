@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/deadlinefen/portmap-mgr/pkg/config"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/config"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -80,13 +80,13 @@ func (jm *JobManager) createLogFile(logFile string) (*os.File, error) {
 func (jm *JobManager) stopAll() {
 	for i := range jm.jobs {
 		jm.jobs[i].Stop()
-		log.Infof("job %s stopped.", jm.jobs[i].name)
+		log.Infof("Job %s stopped.", jm.jobs[i].name)
 	}
 }
 
 func (jm *JobManager) runAll(ipv6 string) {
 	for i := range jm.jobs {
-		log.Infof("job %s run with ip: %s", jm.jobs[i].name, ipv6)
+		log.Infof("Job %s run with ip: %s", jm.jobs[i].name, ipv6)
 		jm.jobs[i].Run(ipv6)
 	}
 }

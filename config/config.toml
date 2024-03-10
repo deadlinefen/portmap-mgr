@@ -5,14 +5,14 @@ file-directory = "/dir/to/mapper-log"
 [resolution]
 domain = "your.domain"
 dns = ["114.114.114.114", "119.29.29.29", "101.226.4.6", "123.125.81.6"]
-ttl = 60                #second
+ttl = 60                                                                 #second
 
 [jobs]
-[jobs.xxx]              # [jobs.{job_name}]
-from-port = 6111        # ipv6 port
-to-ip = "192.168.2.4"   # LAN ip
-to-port = 22            # LAN port
-type = "t"              # "t" for tcp, "u" for udp
+[jobs.xxx] # [jobs.{job_name}]
+from-port = 6111      # ipv6 port
+to-ip = "192.168.2.4" # LAN ip
+to-port = 22          # LAN port
+type = "t"            # "t" for tcp, "u" for udp
 [jobs.yyy]
 from-port = 9191
 to-ip = "192.168.2.4"
@@ -20,7 +20,7 @@ to-port = 9090
 type = "t"
 
 [log]
-level = "Debug"                  # log level: info-debug-warn-error-fatal-panic
-path = "/code/portmap-mgr/build" # log file
-to-stdout-only = true            # to stdout
-also-to-stderr = true            # also to stderr
+level = "Debug"                 # log level: info-debug-warn-error-fatal-panic
+path = "/dir/to/pm-manager-log" # log file
+to-stdout-only = false          # to stdout only
+also-to-stderr = true           # also to stderr

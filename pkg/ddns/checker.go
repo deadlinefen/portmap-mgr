@@ -40,7 +40,7 @@ func (c *Checker) checkDNSOnce() bool {
 
 func (c *Checker) checkDNS() {
 	for !c.checkDNSOnce() {
-		log.Infof("check DNS failed, retry afer 3s.")
+		log.Infof("Check DNS failed, retry afer 3s.")
 		time.Sleep(time.Second * time.Duration(3))
 	}
 }

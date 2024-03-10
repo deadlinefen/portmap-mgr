@@ -6,11 +6,12 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/deadlinefen/portmap-mgr/pkg/config"
-	"github.com/deadlinefen/portmap-mgr/pkg/control"
-	"github.com/deadlinefen/portmap-mgr/pkg/ddns"
-	"github.com/deadlinefen/portmap-mgr/pkg/job"
-	"github.com/deadlinefen/portmap-mgr/pkg/utils"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/config"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/control"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/ddns"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/job"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/utils"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/version"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -30,6 +31,7 @@ func main() {
 
 	// step 1: init log
 	utils.InitLog(&cfg.Log)
+	log.Infof("pm-manager version: %s", version.GetVersion())
 
 	// step 2: init factory
 	rf := ddns.NewResoluterFactory(&cfg.Resolution)
@@ -52,11 +54,11 @@ func main() {
 
 	// Step 3: start signal mux
 	signalHandler := func(signal os.Signal) bool {
-		log.Infof("handle signal: %s", signal.String())
+		log.Infof("Handle signal: %s", signal.String())
 		switch signal {
 		case syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
 			controller.Stop()
-			log.Info("all service stopped.")
+			log.Info("All service stopped.")
 			return true
 		default:
 			return false

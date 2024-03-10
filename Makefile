@@ -5,6 +5,11 @@ else
 	V := @
 endif
 
+tag := $(shell git describe --abbrev=0 --always --dirty --tags)
+sha := $(shell git rev-parse --short HEAD)
+git_tag_sha := $(tag):$(sha)
+LDFLAGS="-X 'github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/version.GitTagSha=$(git_tag_sha)'"
+
 .PHONY: build
 ## build : Build binary
 build: pmmanager read_config ddns_resolute
@@ -36,7 +41,7 @@ help: Makefile
 PHONY: pmmanager
 ## manager : Build manager
 pmmanager: bin
-	$(V)go build -o build/bin/pmmanager main/pm_manager.go
+	$(V)go build -ldflags ${LDFLAGS} -o build/bin/pmmanager main/pm_manager.go
 
 .PHONY: read_config
 ## read_config : Build read_config binary for test

@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/deadlinefen/portmap-mgr/pkg/config"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/config"
 	filename "github.com/keepeye/logrus-filename"
 	log "github.com/sirupsen/logrus"
 	prefixed "github.com/t-tomalak/logrus-prefixed-formatter"

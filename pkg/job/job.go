@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/deadlinefen/portmap-mgr/pkg/config"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/config"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -32,7 +32,7 @@ func (j *Job) Start() {
 			return
 		case <-j.restart:
 			j.process = nil
-			log.Warnf("mapper dead, restart after 3s...")
+			log.Warnf("Job %s mapper dead, restart it after 3s...", j.name)
 			time.Sleep(time.Second * time.Duration(3))
 			j.Run(j.ipv6)
 		}
@@ -64,6 +64,7 @@ func (j *Job) createProcess() *Process {
 	cmd.Stdout = j.log
 
 	return &Process{
+		name:    j.name,
 		cmd:     cmd,
 		closed:  false,
 		restart: make(chan struct{}),

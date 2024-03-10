@@ -30,7 +30,7 @@ func NewSignalMux(handler func(os.Signal) bool) *SignalMux {
 func (s *SignalMux) Serve() {
 	for {
 		signal := <-s.sigChan
-		log.Infof("receive signal: %s", signal.String())
+		log.Infof("Receive signal: %s", signal.String())
 
 		if s.handler(signal) {
 			return

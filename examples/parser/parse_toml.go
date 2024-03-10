@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/deadlinefen/portmap-mgr/pkg/config"
+	"github.com/deadlinefen/tinyPortMapper-manager-ipv6/pkg/config"
 )
 
 var tomlPath string
